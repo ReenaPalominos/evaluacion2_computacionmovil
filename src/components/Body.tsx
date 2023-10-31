@@ -3,22 +3,26 @@ import logo from '../logo.svg';
 import '../styles/App.css';
 import { FakeStore } from '../interfaces/fakestore.interface';
 import { getProducts } from '../services/fakestore.service';
+import { Loading } from './Loading';
+import { Error } from './Error';
 
 export type orden = 'asc' | 'desc'
 
 function Body() {
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(false)
     const [products, setProducts] = useState<FakeStore[]>([])
-    const [ordenDatos, setOrdenDatos] = useState<orden>('asc');
-
+    const [ordenDatos, setOrdenDatos] = useState<orden>('asc')
+    
     useEffect(() => {
         console.log('inicio');
         if (!loading) {
             console.log('cargando');
             getData();
+            setOrdenDatos('asc');
         }
         console.log('fin');
-    }, [ordenDatos])
+    }, [])
 
     const getData = async () => {
         setLoading(true)
@@ -29,30 +33,43 @@ function Body() {
             setProducts(productsData);
             setLoading(false);
             console.log("products:", products);
+            setError(false);
+            
         } catch (error) {
-            console.error(error)
+            setError(true);
+            console.error(error);
         }
         setLoading(false)
     }
+   
 
-    const ordenarProductos = (ord: orden) => {
-        const productosOrdenados = [...products].sort((a, b) => {
-          if (ord === 'asc') {
-            return a.price - b.price;
-          } else {
-            return b.price - a.price;
-          }
-        });
-      
-        setProducts(productosOrdenados);
-      };
-      
+    useEffect(() => {
+      console.log("ordenando");
+        if (ordenDatos === 'asc') {
+            const productosOrdenados = [...products].sort((a, b) => {
+                return a.price - b.price;
+            });
+            setProducts(productosOrdenados);
+        } else {
+            const productosOrdenados = [...products].sort((a, b) => {
+                return b.price - a.price;
+            });
+            setProducts(productosOrdenados);
+      }
+    }, [ordenDatos])
 
+    
     return (
         <div>
             <h1>Lista de Productos</h1>
-            <button onClick={() => ordenarProductos(ordenDatos === 'asc' ? 'desc' : 'asc')}>Cambiar Orden</button>
-
+            <button onClick={() => setOrdenDatos('asc')} hidden={ordenDatos === 'asc'}>Ascendente</button>
+            <button onClick={() => setOrdenDatos('desc')} hidden={ordenDatos === 'desc'}>Descendente</button>
+            
+            {loading ? (
+                <Loading />
+            ) : error ? ( // Muestra el componente Error si hay un error
+                <Error />
+            ) : (
             <table>
                 <thead>
                     <tr>
@@ -72,6 +89,7 @@ function Body() {
                     }
                 </tbody>
             </table>
+            )}
         </div>
     );
 }
