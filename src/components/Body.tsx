@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import logo from '../logo.svg';
 import '../styles/App.css';
 import { FakeStore } from '../interfaces/fakestore.interface';
 import { getProducts } from '../services/fakestore.service';
@@ -64,12 +63,12 @@ function Body() {
             <h1>Lista de Productos</h1>
             <button onClick={() => setOrdenDatos('asc')} hidden={ordenDatos === 'asc'}>Ascendente</button>
             <button onClick={() => setOrdenDatos('desc')} hidden={ordenDatos === 'desc'}>Descendente</button>
-            
             {loading ? (
                 <Loading />
-            ) : error ? ( // Muestra el componente Error si hay un error
+            ) : error ? (
                 <Error />
             ) : (
+            
             <table>
                 <thead>
                     <tr>
