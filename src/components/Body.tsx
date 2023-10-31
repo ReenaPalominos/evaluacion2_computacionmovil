@@ -68,7 +68,6 @@ function Body() {
             ) : error ? (
                 <Error />
             ) : (
-            
             <table>
                 <thead>
                     <tr>
